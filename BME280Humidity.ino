@@ -5,7 +5,6 @@
 #include <ArduinoMqttClient.h>
 #include "Adafruit_TSL2591.h"
 #include <Adafruit_Sensor.h>
-#include <stdio.h>
 
 const int buttonPin = 2;
 int buttonState = 1;
