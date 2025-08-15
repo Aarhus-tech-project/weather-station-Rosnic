@@ -5,31 +5,20 @@
 #include <ArduinoMqttClient.h>
 #include "Adafruit_TSL2591.h"
 #include <Adafruit_Sensor.h>
-#include <PubSubClient.h>
 #include <stdio.h>
 
 const int buttonPin = 2;
 int buttonState = 1;
 bool pause = 0;
 
-enum WeatherState {
-  Dark,
-  Overcast,
-  Daylight,
-  Sunlight
-};
-
 Adafruit_BME280 bme;
 char ssid[] = SECRET_SSID;
 char pswd[] = SECRET_NETPSWD;
 
 Adafruit_TSL2591 tsl = Adafruit_TSL2591(2591);
-WeatherState weatherState;
 
 WiFiClient wifiClient;
 MqttClient mqttClient(wifiClient);
-
-PubSubClient pubSubClient(wifiClient);
 
 const char danSite[] = "192.168.102.254";
 const char serverSite[] = "192.168.111.11";
@@ -94,7 +83,6 @@ void setup() {
   Serial.println("Trying to connect to MQTT broker");
 
   while (!mqttClient.connected()) {
-    // pubSubClient.setServer(server, 1883);
     if (!mqttClient.connect(serverSite, port)) {
       Serial.println("Mqtt connection failed.");
       Serial.println("Retrying in 5 seconds..");
@@ -119,15 +107,6 @@ void loop() {
   }
 
   uint16_t lux = tsl.getLuminosity(TSL2591_VISIBLE);
-  if (lux < 1000) {
-    weatherState = Dark;
-  } else if (lux > 1000 && lux < 10000) {
-    weatherState = Overcast;
-  } else if (lux > 10000 && lux < 25000) {
-    weatherState = Daylight;
-  } else if (lux > 25000) {
-    weatherState = Sunlight;
-  }
 
   String tempString;
   tempString = String(temp);
